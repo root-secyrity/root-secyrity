@@ -119,6 +119,30 @@ def T(face: Face, text: str, size: float, x: float, y: float, fill: str,
 
 
 # ------------------------------------------------------------------ utils ----
+LAMP_CSS = (
+    "<style>"
+    ".l{animation-iteration-count:infinite;animation-timing-function:steps(1,end);"
+    "animation-fill-mode:both}"
+    ".b1{animation-name:blink1;animation-duration:1.9s}"
+    ".b2{animation-name:blink2;animation-duration:1.1s}"
+    ".b3{animation-name:blink3;animation-duration:2.7s}"
+    ".b4{animation-name:blink4;animation-duration:3.6s}"
+    ".sp1{animation-name:spark1;animation-duration:5.2s}"
+    ".sp2{animation-name:spark2;animation-duration:6.9s}"
+    ".sp3{animation-name:spark3;animation-duration:4.3s}"
+    ".runl{animation-name:runblink;animation-duration:1.4s}"
+    "@keyframes blink1{0%,78%{opacity:1}79%,100%{opacity:.22}}"
+    "@keyframes blink2{0%,62%{opacity:1}63%,100%{opacity:.18}}"
+    "@keyframes blink3{0%,86%{opacity:1}87%,100%{opacity:.3}}"
+    "@keyframes blink4{0%,45%{opacity:1}46%,100%{opacity:.25}}"
+    f"@keyframes spark1{{0%,90%{{fill:#241A1A}}91%,96%{{fill:{RED_HI}}}97%,100%{{fill:#241A1A}}}}"
+    f"@keyframes spark2{{0%,88%{{fill:#241A1A}}89%,94%{{fill:{RED_HI}}}95%,100%{{fill:#241A1A}}}}"
+    f"@keyframes spark3{{0%,93%{{fill:#241A1A}}94%,98%{{fill:{RED}}}99%,100%{{fill:#241A1A}}}}"
+    "@keyframes runblink{0%,49%{opacity:1}50%,100%{opacity:.12}}"
+    "</style>"
+)
+
+
 def rect(x, y, w, h, fill, extra="") -> str:
     return f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" fill="{fill}" {extra}/>'
 
@@ -136,11 +160,16 @@ def edge_connector(x, y, w, h, pitch=11, tooth=6, color=GOLD, opacity=0.55) -> s
     return "".join(out)
 
 
-def led(x, y, size, color, on=True, opacity=1.0) -> str:
+def led(x, y, size, color, on=True, cls="", delay=0.0) -> str:
+    """A lamp. cls/delay drive the CSS animation declared inside the SVG --
+    animations in a stylesheet work when GitHub renders the file through <img>."""
+    anim = f'class="l {cls}" style="animation-delay:{delay:.2f}s"' if cls else ""
+    stroke = 'stroke="#3A2E2E" stroke-width="0.6"'
     if on:
         return (f'<rect x="{x:g}" y="{y:g}" width="{size:g}" height="{size:g}" fill="{color}" '
-                f'opacity="{opacity}" filter="url(#glow)"/>')
-    return rect(x, y, size, size, "#241A1A", f'stroke="#3A2E2E" stroke-width="0.6" opacity="{opacity}"')
+                f'filter="url(#glow)" {anim}/>')
+    return (f'<rect x="{x:g}" y="{y:g}" width="{size:g}" height="{size:g}" fill="#241A1A" '
+            f'{stroke} filter="url(#glow)" {anim}/>')
 
 
 # ----------------------------------------------------------------- banner ----
@@ -167,6 +196,7 @@ def banner(mono: dict[str, Face]) -> str:
         f'<path d="M20 0H0V20" fill="none" stroke="#ffffff" stroke-opacity="0.022" stroke-width="1"/></pattern>'
         f'<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">'
         '<rect width="4" height="1" fill="#ffffff" fill-opacity="0.016"/></pattern>'
+        + LAMP_CSS +
         "</defs>"
     )
 
@@ -231,12 +261,19 @@ def banner(mono: dict[str, Face]) -> str:
             o.append(rect(dx, yy - 15, 20, 19, "#0A0808", f'stroke="#2C2222" stroke-width="1"'))
             o.append(T(f_bd, ch, 12, dx + 10, yy - 1.5, RED_HI, anchor="middle", opacity=0.92))
             dx += 23
-    # LED register
+    # LED register : out-of-phase cadences read like a machine executing
     o.append(T(f_reg, "LED", 8.5, px + 14, 158, OUTLINE, ls=1.8))
     lx = right - (12 * 11 - 4)
-    pattern = [1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1]
-    for i, on in enumerate(pattern):
-        o.append(led(lx, 150, 7, RED_HI if i % 4 else GREEN, on=bool(on)))
+    register = [
+        (RED_HI, True,  "b1",  -0.00), (RED_HI, True,  "b2",  -0.40),
+        (RED_HI, True,  "b3",  -0.90), (RED_HI, False, "sp1", -1.50),
+        (RED_HI, True,  "b2",  -0.75), (RED_HI, True,  "b4",  -2.60),
+        (RED_HI, False, "sp2", -3.40), (GREEN,  True,  "",     0.00),
+        (RED_HI, True,  "b1",  -1.15), (RED_HI, False, "sp3",  -0.90),
+        (RED_HI, False, "sp1", -3.80), (RED_HI, True,  "b3",  -1.90),
+    ]
+    for color, on, cls, delay in register:
+        o.append(led(lx, 150, 7, color, on=on, cls=cls, delay=delay))
         lx += 11
     # switch register
     o.append(T(f_reg, "SR", 8.5, px + 14, 192, OUTLINE, ls=1.8))
@@ -323,6 +360,7 @@ def rail(mono: dict[str, Face], repos: list[dict]) -> str:
         '<feMergeNode in="SourceGraphic"/></feMerge></filter>'
         f'<pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">'
         '<rect width="4" height="1" fill="#ffffff" fill-opacity="0.014"/></pattern>'
+        + LAMP_CSS +
         "</defs>"
     )
     o.append(rect(0, 0, W, H, BG))
@@ -360,7 +398,9 @@ def rail(mono: dict[str, Face], repos: list[dict]) -> str:
             o.append(T(sans, ln, 11.5, 366, base + i * 16, MUTE))
 
         # state
-        o.append(rect(898, y + 26, 6, 6, GREEN, 'filter="url(#glow)"'))
+        o.append(rect(898, y + 26, 6, 6, GREEN,
+                      f'filter="url(#glow)" class="l runl" '
+                      f'style="animation-delay:-{i * 0.19:.2f}s"'))
         o.append(T(f_sb, "RUN", 8.5, 910, y + 32.5, GREEN, ls=1.8))
         o.append(T(f_reg, "PUBLIC", 8.5, W - 32, y + 32.5, "#4A4038", ls=1.6, anchor="end"))
 
