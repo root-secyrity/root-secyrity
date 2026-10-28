@@ -1,0 +1,38 @@
+[
+  {
+    "slot": "010",
+    "name": "routwatch",
+    "display": "ROUTWATCH",
+    "lang": "RUST",
+    "kind": "TERMINAL",
+    "desc": "Huawei LTE/5G CPE manager in the terminal - live signal, traffic, clients, bands and DNS.",
+    "url": "https://github.com/root-secyrity/routwatch"
+  },
+  {
+    "slot": "011",
+    "name": "window-stash",
+    "display": "WINDOW-STASH",
+    "lang": "QML",
+    "kind": "BAR PLUGIN",
+    "desc": "Ryoku bar plugin: list open windows on the bar, hide them into their own workspace, restore them, or close them.",
+    "url": "https://github.com/root-secyrity/window-stash"
+  },
+  {
+    "slot": "012",
+    "name": "lockscreen-design",
+    "display": "LOCKSCREEN-DESIGN",
+    "lang": "QML",
+    "kind": "LOCK SKINS",
+    "desc": "qylock lock skins for Ryoku - store packages.",
+    "url": "https://github.com/root-secyrity/lockscreen-design"
+  },
+  {
+    "slot": "013",
+    "name": "ryostore",
+    "display": "RYOSTORE",
+    "lang": "QML",
+    "kind": "FORK",
+    "desc": "Fork of Ryoku-dev/ryostore - community store of tools, plugins, bundles and more.",
+    "url": "https://github.com/root-secyrity/ryostore"
+  }
+]
