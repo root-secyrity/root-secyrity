@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/banner.svg?v=d5acec428acc" width="100%" alt="Root-Securty: lock screens, bar plugins and terminal tools for the Ryoku desktop. A PDP-11 front panel with octal address and data readouts, a blinking LED register, a switch register and a RUN lamp.">
+  <img src="assets/banner.svg?v=89bcea7df299" width="100%" alt="Root-Securty: systems and network. A self-hosted network, hardened Linux, and the tools on it. A PDP-11 front panel with octal address and data readouts that cycle, a live LED register, a switching register and a RUN lamp.">
 </p>
 
 <p align="center">
-  <img src="assets/unibus.svg?v=57d3ffd4e277" width="100%" alt="Module index on a UNIBUS rail: routwatch (Rust, terminal manager for Huawei LTE/5G CPEs), window-stash (QML bar plugin for hiding and restoring windows), lockscreen-design (qylock lock skins) and ryostore (QML fork of the Ryoku community store), each with a live RUN lamp.">
+  <img src="assets/unibus.svg?v=ed50ea1e874e" width="100%" alt="Module index on a UNIBUS rail: routwatch (Rust, terminal manager for Huawei LTE/5G CPEs), window-stash (QML bar plugin for listing, hiding and restoring windows) and lockscreen-design (lock-screen skins), each with a live RUN lamp.">
 </p>
 
 <!--
